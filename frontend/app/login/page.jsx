@@ -1,0 +1,102 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import toast from "react-hot-toast";
+
+import PageWrapper from "@/components/layout/PageWrapper";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import useAuth from "@/hooks/useAuth";
+
+const schema = z.object({
+  email: z.string().min(1, "Email is required").email("Enter a valid email"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export default function LoginPage() {
+  const router = useRouter();
+  const { setUser, setAccessToken } = useAuth();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const onSubmit = async (values) => {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data?.message || "Login failed");
+        return;
+      }
+
+      if (data?.user) setUser(data.user);
+      if (data?.accessToken) setAccessToken(data.accessToken);
+
+      router.push("/");
+    } catch {
+      toast.error("Something went wrong. Try again.");
+    }
+  };
+
+  return (
+    <PageWrapper>
+      <div className="mx-auto w-full max-w-md px-4 py-16">
+        <div className="rounded-xl border border-neutral-100 bg-white p-8 shadow-sm text-black">
+          <h1 className="font-display text-2xl font-semibold text-primary">Sign in</h1>
+          <p className="mt-1 text-sm text-neutral-600">Welcome back to VANINI.</p>
+
+          <form className="mt-8 space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Input
+              label="Email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              register={register}
+              error={errors.email}
+            />
+            <Input
+              label="Password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              register={register}
+              error={errors.password}
+            />
+
+            <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
+              Sign in
+            </Button>
+          </form>
+
+          <div className="mt-6 flex flex-col gap-2 text-center text-sm">
+            <Link href="/forgot-password" className="text-primary underline-offset-4 hover:underline">
+              Forgot password?
+            </Link>
+            <p className="text-neutral-600">
+              No account?{" "}
+              <Link href="/register" className="font-medium text-primary underline-offset-4 hover:underline">
+                Create one
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </PageWrapper>
+  );
+}
