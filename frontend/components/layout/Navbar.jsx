@@ -2,19 +2,34 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiOutlineShoppingBag, HiOutlineHeart, HiOutlineUser, HiBars3, HiXMark } from "react-icons/hi2";
 
 import CartDrawer from "@/components/cart/CartDrawer";
 import useAuth from "@/hooks/useAuth";
 import useCartStore from "@/store/cartStore";
+import api from "@/utils/axios";
 import { slideInLeft } from "@/animations/slideIn";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { accessToken } = useAuth();
+  const router = useRouter();
+  const { accessToken, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      // Requires bearer token (handled by axios interceptor when accessToken exists)
+      await api.post("/auth/logout");
+    } catch {
+      // Even if the API call fails (e.g. expired token), clear local session.
+    } finally {
+      logout();
+      router.push("/login");
+    }
+  };
 
   const itemsCount = useCartStore((s) => s.items.reduce((sum, i) => sum + Number(i.quantity || 0), 0));
 
@@ -122,6 +137,32 @@ export default function Navbar() {
             >
               <HiOutlineUser className="h-6 w-6" />
             </Link>
+
+            {accessToken ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="hidden rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light md:inline-flex"
+                aria-label="Logout"
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light md:inline-flex"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="hidden rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light md:inline-flex"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </motion.header>
@@ -134,7 +175,7 @@ export default function Navbar() {
         {mobileOpen ? (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black"
+              className="fixed inset-0 z-40 bg-slate-950/60"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.4 }}
               exit={{ opacity: 0 }}
@@ -187,13 +228,45 @@ export default function Navbar() {
                 >
                   Wishlist
                 </Link>
-                <Link
-                  href={accessToken ? "/account" : "/login"}
-                  className="rounded-md px-3 py-2 text-sm font-medium text-primary hover:bg-neutral-100"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {accessToken ? "Account" : "Sign in"}
-                </Link>
+                {accessToken ? (
+                  <Link
+                    href="/account"
+                    className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Account
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
+
+                {accessToken ? (
+                  <button
+                    type="button"
+                    className="rounded-md bg-primary px-3 py-2 text-left text-sm font-medium text-white hover:bg-primary-light"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      handleLogout();
+                    }}
+                  >
+                    Logout
+                  </button>
+                ) : null}
               </div>
             </motion.aside>
           </>

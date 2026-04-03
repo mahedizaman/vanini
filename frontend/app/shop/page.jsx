@@ -193,7 +193,7 @@ export default function ShopPage() {
         {mobileFiltersOpen ? (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black"
+              className="fixed inset-0 z-40 bg-slate-950/60"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.4 }}
               exit={{ opacity: 0 }}

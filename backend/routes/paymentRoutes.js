@@ -101,8 +101,12 @@ const {
 
 router.post('/init', authMiddleware, initPayment);
 router.post('/success', paymentSuccess);
+router.get('/success', paymentSuccess);
 router.post('/fail', paymentFail);
+router.get('/fail', paymentFail);
 router.post('/cancel', paymentCancel);
+router.get('/cancel', paymentCancel);
 router.post('/ipn', paymentIPN);
+router.get('/ipn', paymentIPN);
 
 module.exports = router;

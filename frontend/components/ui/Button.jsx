@@ -8,8 +8,9 @@ const base =
 
 const variants = {
   primary: "bg-primary text-white hover:bg-primary-light",
-  outline: "border border-primary text-primary hover:bg-primary hover:text-white",
-  ghost: "text-primary hover:bg-neutral-100",
+  // Per your UI request: keep the same 3D2B1F background + white text for all button variants.
+  outline: "border border-primary bg-primary text-white hover:bg-primary-light",
+  ghost: "bg-primary text-white hover:bg-primary-light",
 };
 
 const sizes = {

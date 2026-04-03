@@ -1,5 +1,6 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const Category = require('../models/Category');
+const { cloudinary } = require('../utils/cloudinary');
 
 const slugify = (value) =>
   String(value || '')
@@ -9,9 +10,37 @@ const slugify = (value) =>
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-');
 
+const toCloudinaryUrl = (value) => {
+  if (!value) return value;
+  const s = String(value).trim();
+  if (!s) return s;
+
+  // If it's already a full URL, return as-is.
+  if (/^https?:\/\//i.test(s)) return s;
+  if (s.includes('res.cloudinary.com')) {
+    // Next/Image remotePatterns in this project allow `https` only.
+    // Some stored values may be `http://...`; normalize to https.
+    return s.replace(/^http:\/\//i, "https://");
+  }
+
+  // If it's a path/public_id with an extension, remove the extension.
+  // Example stored value: `ecommerce/category-name.jpg` -> `ecommerce/category-name`
+  const normalizedPublicId = s.replace(/\.(jpe?g|png|webp)$/i, '');
+
+  return cloudinary.url(normalizedPublicId, {
+    width: 800,
+    crop: 'limit',
+    quality: 'auto',
+  });
+};
+
 const getAll = asyncHandler(async (req, res) => {
-  const categories = await Category.find().sort({ createdAt: -1 });
-  res.json(categories);
+  const categories = await Category.find().sort({ createdAt: -1 }).lean();
+  const transformed = categories.map((c) => ({
+    ...c,
+    image: toCloudinaryUrl(c.image),
+  }));
+  res.json(transformed);
 });
 
 const getOne = asyncHandler(async (req, res) => {
@@ -20,7 +49,10 @@ const getOne = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Category not found');
   }
-  res.json(category);
+  res.json({
+    ...category.toObject(),
+    image: toCloudinaryUrl(category.image),
+  });
 });
 
 const create = asyncHandler(async (req, res) => {
@@ -36,7 +68,10 @@ const create = asyncHandler(async (req, res) => {
     image,
   });
 
-  res.status(201).json(category);
+  res.status(201).json({
+    ...category.toObject(),
+    image: toCloudinaryUrl(category.image),
+  });
 });
 
 const update = asyncHandler(async (req, res) => {
@@ -60,7 +95,10 @@ const update = asyncHandler(async (req, res) => {
     throw new Error('Category not found');
   }
 
-  res.json(category);
+  res.json({
+    ...category.toObject(),
+    image: toCloudinaryUrl(category.image),
+  });
 });
 
 const remove = asyncHandler(async (req, res) => {

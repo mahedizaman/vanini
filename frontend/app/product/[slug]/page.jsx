@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { HiOutlineHeart, HiStar, HiOutlineStar } from "react-icons/hi2";
 
@@ -12,8 +12,19 @@ import Button from "@/components/ui/Button";
 import useCartStore from "@/store/cartStore";
 
 const fetchProduct = async (slug) => {
-  const res = await api.get(`/products/slug/${slug}`);
-  return res.data?.data || res.data;
+  // The route param may be either a slug or (in some cases) an id.
+  // Prefer slug lookup, but fall back to id to avoid "Product not found".
+  try {
+    const res = await api.get(`/products/slug/${encodeURIComponent(slug)}`);
+    return res.data?.data || res.data;
+  } catch (err) {
+    const status = err?.response?.status;
+    if (status === 404) {
+      const res2 = await api.get(`/products/${encodeURIComponent(slug)}`);
+      return res2.data?.data || res2.data;
+    }
+    throw err;
+  }
 };
 
 const clampRating = (v) => Math.max(0, Math.min(5, Number(v || 0)));
@@ -35,12 +46,26 @@ function Stars({ rating = 0 }) {
 }
 
 export default function ProductSlugPage({ params }) {
-  const slug = params.slug;
+  // Next.js may pass `params` as a Promise in some configurations.
+  // Avoid reading `params.slug` synchronously to prevent the warning.
+  const [slug, setSlug] = useState("");
   const addItem = useCartStore((s) => s.addItem);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.resolve(params).then((p) => {
+      if (cancelled) return;
+      setSlug(p?.slug ? String(p.slug) : "");
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [params]);
 
   const productQuery = useQuery({
     queryKey: ["product", slug],
     queryFn: () => fetchProduct(slug),
+    enabled: Boolean(slug),
   });
 
   const product = productQuery.data;

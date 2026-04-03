@@ -23,7 +23,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} h-full antialiased`}>
-      <body className="min-h-full bg-neutral-50 font-sans text-primary">
+      <body className="min-h-full bg-gradient-to-b from-indigo-50 via-white to-tomato-50 font-sans text-slate-900">
         <Providers>
           <Navbar />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>

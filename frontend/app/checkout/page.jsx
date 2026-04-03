@@ -270,8 +270,8 @@ function CheckoutContent() {
                     className={[
                       "rounded-xl border px-4 py-4 text-left text-sm font-medium transition",
                       paymentMethod === "SSLCommerz"
-                        ? "border-primary bg-neutral-50 text-primary"
-                        : "border-neutral-100 hover:border-neutral-200",
+                        ? "border-primary bg-primary text-white hover:bg-primary-light"
+                        : "border-primary/40 bg-primary/90 text-white hover:bg-primary-light",
                     ].join(" ")}
                   >
                     Pay with SSLCommerz
@@ -282,8 +282,8 @@ function CheckoutContent() {
                     className={[
                       "rounded-xl border px-4 py-4 text-left text-sm font-medium transition",
                       paymentMethod === "COD"
-                        ? "border-primary bg-neutral-50 text-primary"
-                        : "border-neutral-100 hover:border-neutral-200",
+                        ? "border-primary bg-primary text-white hover:bg-primary-light"
+                        : "border-primary/40 bg-primary/90 text-white hover:bg-primary-light",
                     ].join(" ")}
                   >
                     Cash on Delivery
@@ -296,7 +296,7 @@ function CheckoutContent() {
                   </Button>
                   <Button
                     type="button"
-                    className="bg-accent hover:bg-accent-hover"
+                      className="bg-accent hover:bg-accent-hover"
                     size="lg"
                     isLoading={placing}
                     onClick={onPlaceOrder}

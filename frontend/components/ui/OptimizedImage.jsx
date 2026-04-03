@@ -21,11 +21,13 @@ export default function OptimizedImage({
   if (!src) return null;
 
   const isCloudinary = typeof src === "string" && CLOUDINARY_HOST.test(src);
+  const normalizedSrc =
+    isCloudinary && typeof src === "string" ? src.replace(/^http:\/\//i, "https://") : src;
 
   if (isCloudinary && fill) {
     return (
       <Image
-        src={src}
+        src={normalizedSrc}
         alt={alt}
         fill
         className={className}
@@ -38,7 +40,7 @@ export default function OptimizedImage({
   if (isCloudinary && width && height) {
     return (
       <Image
-        src={src}
+        src={normalizedSrc}
         alt={alt}
         width={width}
         height={height}
@@ -50,5 +52,5 @@ export default function OptimizedImage({
   }
 
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} className={className} loading={priority ? "eager" : "lazy"} />;
+  return <img src={normalizedSrc} alt={alt} className={className} loading={priority ? "eager" : "lazy"} />;
 }

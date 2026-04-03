@@ -48,6 +48,8 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body || {};
   const normalizedEmail = String(email || '').trim().toLowerCase();
 
+  const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
   if (process.env.DEBUG_AUTH === 'true') {
     console.log('[auth/login] called', {
       hasEmail: Boolean(email),
@@ -61,7 +63,14 @@ const login = asyncHandler(async (req, res) => {
     throw new Error('Email and password are required');
   }
 
-  const user = await User.findOne({ email: normalizedEmail });
+  // First try exact match, then fall back to case-insensitive match.
+  // This helps when existing users were created before email lowercasing.
+  let user = await User.findOne({ email: normalizedEmail });
+  if (!user) {
+    user = await User.findOne({
+      email: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: 'i' },
+    });
+  }
   if (!user) {
     return res.status(401).json({ success: false, message: 'Not authorized' });
   }

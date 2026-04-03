@@ -84,7 +84,8 @@ const handlePaidOrder = async (tranId) => {
 };
 
 const paymentSuccess = asyncHandler(async (req, res) => {
-  const { val_id, tran_id } = req.body || {};
+  const src = req.body || req.query || {};
+  const { val_id, tran_id } = src;
   if (!val_id || !tran_id) {
     res.status(400);
     throw new Error('val_id and tran_id are required');
@@ -109,24 +110,29 @@ const paymentSuccess = asyncHandler(async (req, res) => {
     throw new Error('Order not found');
   }
 
-  return res.redirect(`${process.env.CLIENT_URL}/orders/${order._id}?status=success`);
+  const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
+  return res.redirect(`${CLIENT_URL}/orders/${order._id}?status=success`);
 });
 
 const paymentFail = asyncHandler(async (req, res) => {
-  const { tran_id } = req.body || {};
+  const src = req.body || req.query || {};
+  const { tran_id } = src;
   if (tran_id) {
     await Order.findByIdAndUpdate(tran_id, { paymentStatus: 'failed' });
   }
 
-  return res.redirect(`${process.env.CLIENT_URL}/checkout?status=failed`);
+  const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
+  return res.redirect(`${CLIENT_URL}/checkout?status=failed`);
 });
 
 const paymentCancel = asyncHandler(async (req, res) => {
-  return res.redirect(`${process.env.CLIENT_URL}/checkout?status=cancelled`);
+  const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
+  return res.redirect(`${CLIENT_URL}/checkout?status=cancelled`);
 });
 
 const paymentIPN = asyncHandler(async (req, res) => {
-  const { val_id, tran_id } = req.body || {};
+  const src = req.body || req.query || {};
+  const { val_id, tran_id } = src;
   if (!val_id || !tran_id) {
     return res.status(400).json({ success: false, message: 'val_id and tran_id are required' });
   }

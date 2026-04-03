@@ -191,8 +191,9 @@ const getOne = asyncHandler(async (req, res) => {
     .populate('reviews.user', 'name');
 
   if (!product || product.isActive === false) {
-    res.status(404);
-    throw new Error('Product not found');
+    const err = new Error('Product not found');
+    err.statusCode = 404;
+    throw err;
   }
 
   res.json({ success: true, data: product });
@@ -205,8 +206,9 @@ const getBySlug = asyncHandler(async (req, res) => {
     .populate('reviews.user', 'name');
 
   if (!product || product.isActive === false) {
-    res.status(404);
-    throw new Error('Product not found');
+    const err = new Error('Product not found');
+    err.statusCode = 404;
+    throw err;
   }
 
   res.json({ success: true, data: product });
