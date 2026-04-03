@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiOutlineShoppingBag, HiOutlineHeart, HiOutlineUser, HiBars3, HiXMark } from "react-icons/hi2";
 
@@ -16,6 +17,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const { accessToken, logout } = useAuth();
 
@@ -32,6 +34,23 @@ export default function Navbar() {
   };
 
   const itemsCount = useCartStore((s) => s.items.reduce((sum, i) => sum + Number(i.quantity || 0), 0));
+
+  const wishlistQuery = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: async () => {
+      const res = await api.get("/wishlist");
+      return res.data?.wishlist ?? [];
+    },
+    enabled: mounted && Boolean(accessToken),
+  });
+  const wishlistCount = Array.isArray(wishlistQuery.data) ? wishlistQuery.data.length : 0;
+  const safeAccessToken = mounted ? accessToken : null;
+  const safeItemsCount = mounted ? itemsCount : 0;
+  const safeWishlistCount = mounted ? wishlistCount : 0;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -95,7 +114,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-8 md:flex font-poppins">
             {navLinks.map((l) => (
               <Link
                 key={l.href}
@@ -107,13 +126,18 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 font-poppins">
             <Link
               href="/wishlist"
-              className="inline-flex items-center justify-center rounded-md p-2 hover:bg-neutral-100"
+              className="relative inline-flex items-center justify-center rounded-md p-2 hover:bg-neutral-100"
               aria-label="Wishlist"
             >
               <HiOutlineHeart className="h-6 w-6" />
+              {safeWishlistCount > 0 ? (
+                <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-semibold text-white">
+                  {safeWishlistCount}
+                </span>
+              ) : null}
             </Link>
 
             <button
@@ -123,22 +147,22 @@ export default function Navbar() {
               onClick={() => setCartOpen(true)}
             >
               <HiOutlineShoppingBag className="h-6 w-6" />
-              {itemsCount > 0 ? (
+              {safeItemsCount > 0 ? (
                 <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-white">
-                  {itemsCount}
+                  {safeItemsCount}
                 </span>
               ) : null}
             </button>
 
             <Link
-              href={accessToken ? "/account" : "/login"}
+              href={safeAccessToken ? "/account" : "/login"}
               className="inline-flex items-center justify-center rounded-md p-2 hover:bg-neutral-100"
-              aria-label={accessToken ? "Account" : "Sign in"}
+              aria-label={safeAccessToken ? "Account" : "Sign in"}
             >
               <HiOutlineUser className="h-6 w-6" />
             </Link>
 
-            {accessToken ? (
+            {safeAccessToken ? (
               <button
                 type="button"
                 onClick={handleLogout}
@@ -219,16 +243,16 @@ export default function Navbar() {
                     setCartOpen(true);
                   }}
                 >
-                  Cart{itemsCount > 0 ? ` (${itemsCount})` : ""}
+                  Cart{safeItemsCount > 0 ? ` (${safeItemsCount})` : ""}
                 </button>
                 <Link
                   href="/wishlist"
                   className="rounded-md px-3 py-2 text-sm font-medium text-primary hover:bg-neutral-100"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Wishlist
+                  Wishlist{safeWishlistCount > 0 ? ` (${safeWishlistCount})` : ""}
                 </Link>
-                {accessToken ? (
+                {safeAccessToken ? (
                   <Link
                     href="/account"
                     className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light"
@@ -255,7 +279,7 @@ export default function Navbar() {
                   </>
                 )}
 
-                {accessToken ? (
+                {safeAccessToken ? (
                   <button
                     type="button"
                     className="rounded-md bg-primary px-3 py-2 text-left text-sm font-medium text-white hover:bg-primary-light"

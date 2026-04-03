@@ -4,11 +4,16 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { HiOutlineHeart, HiStar, HiOutlineStar } from "react-icons/hi2";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 import useCartStore from "@/store/cartStore";
+import useAuth from "@/hooks/useAuth";
+import api from "@/utils/axios";
 
 const clampRating = (v) => Math.max(0, Math.min(5, Number(v || 0)));
 
@@ -30,29 +35,50 @@ function Stars({ rating = 0 }) {
 
 export default function ProductCard({ product }) {
   const addItem = useCartStore((s) => s.addItem);
-  const [wishlisted, setWishlisted] = React.useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
+  const [cartPulse, setCartPulse] = React.useState(false);
 
   const image = product?.images?.[0];
   const hasDiscount = product?.discountPrice !== undefined && product?.discountPrice !== null;
 
-  const onQuickAdd = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem({
-      product: product._id,
-      title: product.title,
-      image: image || "",
-      price: hasDiscount ? product.discountPrice : product.price,
-      quantity: 1,
-      size: null,
-      color: null,
-    });
-  };
+  const wishlistQuery = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: async () => {
+      const res = await api.get("/wishlist");
+      return res.data?.wishlist ?? [];
+    },
+    enabled: Boolean(accessToken),
+  });
+
+  const wishlisted =
+    Boolean(product?._id) &&
+    Array.isArray(wishlistQuery.data) &&
+    wishlistQuery.data.some((p) => String(p._id) === String(product._id));
 
   const onToggleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setWishlisted((v) => !v);
+    if (!product?._id) return;
+    if (!accessToken) {
+      router.push("/login");
+      return;
+    }
+
+    (async () => {
+      try {
+        if (wishlisted) {
+          await api.delete(`/wishlist/${product._id}`);
+        } else {
+          await api.post(`/wishlist/${product._id}`);
+        }
+        await queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+        toast.success(wishlisted ? "Removed from wishlist" : "Added to wishlist");
+      } catch (err) {
+        toast.error(err?.response?.data?.message || "Wishlist update failed");
+      }
+    })();
   };
 
   return (
@@ -116,8 +142,27 @@ export default function ProductCard({ product }) {
           </div>
 
           <div className="mt-3">
-            <Button className="w-full" size="sm" onClick={onQuickAdd}>
-              Add to Cart
+            <Button
+              className={`w-full ${cartPulse ? "!bg-amber-500 !hover:bg-amber-600" : ""}`}
+              size="sm"
+              onClick={(e) => {
+                // keep click inside Link from navigating
+                e.preventDefault();
+                e.stopPropagation();
+                addItem({
+                  product: product._id,
+                  title: product.title,
+                  image: image || "",
+                  price: hasDiscount ? product.discountPrice : product.price,
+                  quantity: 1,
+                  size: null,
+                  color: null,
+                });
+                setCartPulse(true);
+                window.setTimeout(() => setCartPulse(false), 1000);
+              }}
+            >
+              {cartPulse ? "Added to Cart" : "Add to Cart"}
             </Button>
           </div>
         </div>

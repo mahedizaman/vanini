@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { HiOutlineHeart, HiStar, HiOutlineStar } from "react-icons/hi2";
+import toast from "react-hot-toast";
 
 import api from "@/utils/axios";
 import ProductImageGallery from "@/components/product/ProductImageGallery";
 import ReviewSection from "@/components/product/ReviewSection";
 import Button from "@/components/ui/Button";
 import useCartStore from "@/store/cartStore";
+import useAuth from "@/hooks/useAuth";
 
 const fetchProduct = async (slug) => {
   // The route param may be either a slug or (in some cases) an id.
@@ -50,6 +53,9 @@ export default function ProductSlugPage({ params }) {
   // Avoid reading `params.slug` synchronously to prevent the warning.
   const [slug, setSlug] = useState("");
   const addItem = useCartStore((s) => s.addItem);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
 
   useEffect(() => {
     let cancelled = false;
@@ -75,7 +81,7 @@ export default function ProductSlugPage({ params }) {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [qty, setQty] = useState(1);
-  const [wish, setWish] = useState(false);
+  const [cartPulse, setCartPulse] = useState(false);
 
   const hasDiscount = product?.discountPrice !== undefined && product?.discountPrice !== null;
   const unitPrice = hasDiscount ? product?.discountPrice : product?.price;
@@ -83,6 +89,20 @@ export default function ProductSlugPage({ params }) {
   const breadcrumbCategory = product?.category?.name || "Shop";
 
   const canAdd = Boolean(product?._id) && (sizes.length ? Boolean(selectedSize) : true) && (colors.length ? Boolean(selectedColor) : true);
+
+  const wishlistQuery = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: async () => {
+      const res = await api.get("/wishlist");
+      return res.data?.wishlist ?? [];
+    },
+    enabled: Boolean(accessToken),
+  });
+
+  const wishlisted =
+    Boolean(product?._id) &&
+    Array.isArray(wishlistQuery.data) &&
+    wishlistQuery.data.some((p) => String(p._id) === String(product._id));
 
   const onAddToCart = () => {
     if (!canAdd) return;
@@ -95,6 +115,27 @@ export default function ProductSlugPage({ params }) {
       size: selectedSize || null,
       color: selectedColor || null,
     });
+  };
+
+  const addToCartWithFeedback = () => {
+    if (!product?._id) return;
+    // If user didn't select size/color, default to first available option
+    // so wishlist->cart flow works even with zero selections.
+    const size = sizes.length ? selectedSize || sizes[0] : null;
+    const color = colors.length ? selectedColor || colors[0] : null;
+
+    addItem({
+      product: product._id,
+      title: product.title,
+      image: product.images?.[0] || "",
+      price: unitPrice,
+      quantity: qty,
+      size: size || null,
+      color: color || null,
+    });
+
+    setCartPulse(true);
+    window.setTimeout(() => setCartPulse(false), 1000);
   };
 
   const description = product?.description || "";
@@ -214,16 +255,36 @@ export default function ProductSlugPage({ params }) {
           </div>
 
           <div className="mt-7 flex items-center gap-3">
-            <Button className="flex-1" disabled={!canAdd} onClick={onAddToCart}>
-              Add to Cart
+            <Button
+              className={`flex-1 ${cartPulse ? "!bg-amber-500 !hover:bg-amber-600" : ""}`}
+              disabled={!canAdd}
+              onClick={addToCartWithFeedback}
+            >
+              {cartPulse ? "Added to Cart" : "Add to Cart"}
             </Button>
             <button
               type="button"
               className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-100 bg-white hover:bg-neutral-50"
-              onClick={() => setWish((v) => !v)}
+              onClick={async () => {
+                if (!accessToken) {
+                  router.push("/login");
+                  return;
+                }
+                if (!product?._id) return;
+                try {
+                  if (wishlisted) {
+                    await api.delete(`/wishlist/${product._id}`);
+                  } else {
+                    await api.post(`/wishlist/${product._id}`);
+                  }
+                  await queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+                } catch (err) {
+                  toast.error(err?.response?.data?.message || "Wishlist update failed");
+                }
+              }}
               aria-label="Add to Wishlist"
             >
-              <HiOutlineHeart className={`h-6 w-6 ${wish ? "text-accent" : "text-primary"}`} />
+              <HiOutlineHeart className={`h-6 w-6 ${wishlisted ? "text-accent" : "text-primary"}`} />
             </button>
           </div>
 

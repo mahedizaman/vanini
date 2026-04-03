@@ -15,8 +15,13 @@ module.exports = {
         neutral: { 50: "#F8F8F8", 100: "#F0F0F0", 800: "#2D2D2D" },
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        display: ["Playfair Display", "serif"],
+        // utilities: font-roboto, font-poppins, font-montserrat
+        roboto: ["var(--font-roboto)", "system-ui", "sans-serif"],
+        poppins: ["var(--font-poppins)", "system-ui", "sans-serif"],
+        montserrat: ["var(--font-montserrat)", "system-ui", "sans-serif"],
+        // defaults used by Tailwind's font-sans & font-display
+        sans: ["var(--font-roboto)", "system-ui", "sans-serif"],
+        display: ["var(--font-montserrat)", "system-ui", "sans-serif"],
       },
     },
   },

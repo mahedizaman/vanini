@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 
 import "./index.css";
 import App from "./App.jsx";
+import SessionBootstrap from "./components/auth/SessionBootstrap.jsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,6 +17,7 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
+      <SessionBootstrap />
       <BrowserRouter>
         <App />
         <Toaster position="top-right" />

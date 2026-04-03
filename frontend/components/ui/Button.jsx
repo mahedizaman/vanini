@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/utils/helpers";
 
 const base =
-  "inline-flex items-center justify-center rounded-lg font-medium transition duration-200 disabled:opacity-60 disabled:pointer-events-none";
+  "inline-flex items-center justify-center rounded-lg font-poppins font-medium transition duration-200 disabled:opacity-60 disabled:pointer-events-none";
 
 const variants = {
   primary: "bg-primary text-white hover:bg-primary-light",

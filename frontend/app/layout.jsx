@@ -1,18 +1,26 @@
-import { Inter, Playfair_Display } from "next/font/google";
+import { Roboto, Poppins, Montserrat } from "next/font/google";
 import "./globals.css";
 
 import Providers from "./providers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
-const inter = Inter({
+const roboto = Roboto({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
 });
 
-const playfair = Playfair_Display({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-montserrat",
 });
 
 export const metadata = {
@@ -22,8 +30,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} h-full antialiased`}>
-      <body className="min-h-full bg-gradient-to-b from-indigo-50 via-white to-tomato-50 font-sans text-slate-900">
+    <html
+      lang="en"
+      className={`${roboto.variable} ${poppins.variable} ${montserrat.variable} h-full antialiased`}
+    >
+      <body className="min-h-full bg-neutral-50 font-roboto text-primary">
         <Providers>
           <Navbar />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>

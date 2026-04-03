@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import api from "@/utils/axios";
 export default function WishlistProductCard({ product }) {
   const queryClient = useQueryClient();
   const addItem = useCartStore((s) => s.addItem);
+  const [cartPulse, setCartPulse] = useState(false);
 
   const image = product?.images?.[0];
   const hasDiscount = product?.discountPrice !== undefined && product?.discountPrice !== null;
@@ -29,6 +31,8 @@ export default function WishlistProductCard({ product }) {
       color: null,
     });
     toast.success("Added to cart");
+    setCartPulse(true);
+    window.setTimeout(() => setCartPulse(false), 1000);
   };
 
   const handleRemove = async () => {
@@ -83,8 +87,13 @@ export default function WishlistProductCard({ product }) {
         <Button type="button" variant="outline" size="sm" className="w-full" onClick={handleRemove}>
           Remove from Wishlist
         </Button>
-        <Button type="button" className="w-full" size="sm" onClick={handleAddToCart}>
-          Add to Cart
+        <Button
+          type="button"
+          className={`w-full ${cartPulse ? "!bg-amber-500 !hover:bg-amber-600" : ""}`}
+          size="sm"
+          onClick={handleAddToCart}
+        >
+          {cartPulse ? "Added to Cart" : "Add to Cart"}
         </Button>
       </div>
     </motion.div>

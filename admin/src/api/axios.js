@@ -6,10 +6,20 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const tokenFromStorage =
+  typeof window !== "undefined" ? window.localStorage.getItem("admin_token") : null;
+if (tokenFromStorage) {
+  api.defaults.headers.common.Authorization = `Bearer ${tokenFromStorage}`;
+}
+
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken;
+  const token =
+    useAuthStore.getState().accessToken ||
+    (typeof window !== "undefined" ? window.localStorage.getItem("admin_token") : null);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else if (config.headers?.Authorization) {
+    delete config.headers.Authorization;
   }
   return config;
 });
@@ -27,6 +37,7 @@ api.interceptors.response.use(
 
         if (newToken) {
           useAuthStore.getState().setAccessToken(newToken);
+          api.defaults.headers.common.Authorization = `Bearer ${newToken}`;
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return api(originalRequest);
         }
