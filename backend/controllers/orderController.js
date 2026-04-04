@@ -1,5 +1,8 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const Order = require('../models/Order');
+const { assignInvoiceIfMissing, renderInvoiceHtml } = require('../utils/orderInvoice');
+
+const PAYMENT_METHODS = ['COD', 'DirectPay', 'SSLCommerz'];
 
 const calcTotalPrice = (items) =>
   (items || []).reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
@@ -17,6 +20,11 @@ const createOrder = asyncHandler(async (req, res) => {
   if (!Array.isArray(items) || items.length === 0) {
     res.status(400);
     throw new Error('Order items are required');
+  }
+
+  if (!paymentMethod || !PAYMENT_METHODS.includes(paymentMethod)) {
+    res.status(400);
+    throw new Error('Invalid payment method');
   }
 
   const totalPrice = calcTotalPrice(items);
@@ -37,6 +45,12 @@ const createOrder = asyncHandler(async (req, res) => {
     paymentStatus: 'pending',
     orderStatus,
   });
+
+  // COD: issue invoice immediately (pay on delivery — admin fulfillment doc).
+  if (paymentMethod === 'COD') {
+    assignInvoiceIfMissing(order);
+    await order.save();
+  }
 
   res.status(201).json({ success: true, data: order });
 });
@@ -121,6 +135,19 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
   res.json({ success: true, data: order });
 });
 
+const getOrderInvoiceHtml = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id).populate('user', 'name email');
+
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  const html = renderInvoiceHtml(order);
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(html);
+});
+
 const addTrackingNumber = asyncHandler(async (req, res) => {
   const { trackingNumber } = req.body || {};
   if (trackingNumber === undefined || trackingNumber === null) {
@@ -148,5 +175,6 @@ module.exports = {
   getMyOrder,
   getAllOrders,
   updateOrderStatus,
+  getOrderInvoiceHtml,
   addTrackingNumber,
 };

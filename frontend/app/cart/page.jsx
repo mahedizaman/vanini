@@ -118,7 +118,7 @@ export default function CartPage() {
                             <div className="inline-flex items-center rounded-md border border-neutral-200">
                               <button
                                 type="button"
-                                className="p-2 hover:bg-neutral-100 disabled:opacity-40"
+                                className="bg-black p-2 text-white hover:bg-neutral-900 disabled:opacity-40"
                                 aria-label="Decrease quantity"
                                 disabled={Number(item.quantity || 1) <= 1}
                                 onClick={() =>
@@ -130,7 +130,7 @@ export default function CartPage() {
                               <span className="min-w-10 select-none text-center">{item.quantity}</span>
                               <button
                                 type="button"
-                                className="p-2 hover:bg-neutral-100"
+                                className="bg-black p-2 text-white hover:bg-neutral-900"
                                 aria-label="Increase quantity"
                                 onClick={() =>
                                   updateQuantity(item.product, item.size, item.color, Number(item.quantity || 1) + 1)
@@ -146,7 +146,7 @@ export default function CartPage() {
                           <td className="px-2 py-4">
                             <button
                               type="button"
-                              className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100"
+                              className="rounded-md bg-black p-2 text-white hover:bg-neutral-900"
                               aria-label="Remove item"
                               onClick={() => removeItem(item.product, item.size, item.color)}
                             >
@@ -192,7 +192,7 @@ export default function CartPage() {
                         <span className="tabular-nums text-accent">−৳{discountAmount.toFixed(0)}</span>
                         <button
                           type="button"
-                          className="text-xs text-neutral-500 underline"
+                          className="rounded-md bg-black px-2 py-1 text-xs font-medium text-white underline hover:bg-neutral-900"
                           onClick={() => {
                             clearCoupon();
                             setCouponInput("");
@@ -223,7 +223,7 @@ export default function CartPage() {
               </p>
 
               <Link href="/checkout" className="mt-6 block">
-                <Button className="w-full bg-accent hover:bg-accent-hover" size="lg">
+                <Button className="w-full" size="lg">
                   Proceed to Checkout
                 </Button>
               </Link>

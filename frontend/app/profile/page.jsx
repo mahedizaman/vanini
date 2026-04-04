@@ -198,7 +198,9 @@ function ProfileInner() {
           onClick={() => setTab("profile")}
           className={cn(
             "-mb-px border-b-2 px-3 py-2 text-sm font-medium transition",
-            tab === "profile" ? "border-primary text-primary" : "border-transparent text-neutral-600 hover:text-primary"
+            tab === "profile"
+              ? "rounded-md bg-black text-white ring-2 ring-white"
+              : "rounded-md bg-black text-white/80 hover:bg-neutral-900 hover:text-white"
           )}
         >
           Profile Info
@@ -208,7 +210,9 @@ function ProfileInner() {
           onClick={() => setTab("addresses")}
           className={cn(
             "-mb-px border-b-2 px-3 py-2 text-sm font-medium transition",
-            tab === "addresses" ? "border-primary text-primary" : "border-transparent text-neutral-600 hover:text-primary"
+            tab === "addresses"
+              ? "rounded-md bg-black text-white ring-2 ring-white"
+              : "rounded-md bg-black text-white/80 hover:bg-neutral-900 hover:text-white"
           )}
         >
           My Addresses
@@ -262,7 +266,7 @@ function ProfileInner() {
                 register={passwordForm.register}
                 error={passwordForm.formState.errors.confirmPassword}
               />
-              <Button type="submit" isLoading={changePassword.isPending}>
+              <Button type="submit" className={"bg-black"} isLoading={changePassword.isPending}>
                 Update password
               </Button>
             </form>
@@ -272,7 +276,7 @@ function ProfileInner() {
         <div>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="font-display text-lg font-semibold text-primary">Saved addresses</h2>
-            <Button type="button" onClick={openAddModal}>
+            <Button type="button" className={"bg-black"} onClick={openAddModal}>
               Add Address
             </Button>
           </div>
@@ -335,10 +339,10 @@ function ProfileInner() {
             </label>
           ) : null}
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => setAddressModalOpen(false)}>
+            <Button type="button" className={"bg-black"} variant="outline" onClick={() => setAddressModalOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" isLoading={updateAddresses.isPending}>
+            <Button type="submit" className={"bg-black"} isLoading={updateAddresses.isPending}>
               Save address
             </Button>
           </div>

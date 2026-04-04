@@ -29,7 +29,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
               </div>
               <button
                 type="button"
-                className="rounded-md p-2 hover:bg-neutral-100"
+                className="rounded-md bg-black p-2 text-white hover:bg-neutral-900"
                 aria-label="Close modal"
                 onClick={onClose}
               >

@@ -102,7 +102,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-md p-2 hover:bg-neutral-100 md:hidden"
+              className="inline-flex items-center justify-center rounded-md bg-black p-2 text-white hover:bg-neutral-900 md:hidden"
               aria-label="Open menu"
               onClick={() => setMobileOpen(true)}
             >
@@ -129,10 +129,10 @@ export default function Navbar() {
           <div className="flex items-center gap-2 font-poppins">
             <Link
               href="/wishlist"
-              className="relative inline-flex items-center justify-center rounded-md p-2 hover:bg-neutral-100"
+              className="relative inline-flex items-center justify-center rounded-md p-2 bg-black text-white  hover:bg-neutral-100"
               aria-label="Wishlist"
             >
-              <HiOutlineHeart className="h-6 w-6" />
+              <HiOutlineHeart className="h-6 w-6 " />
               {safeWishlistCount > 0 ? (
                 <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-semibold text-white">
                   {safeWishlistCount}
@@ -142,7 +142,7 @@ export default function Navbar() {
 
             <button
               type="button"
-              className="relative inline-flex items-center justify-center rounded-md p-2 hover:bg-neutral-100"
+              className="relative inline-flex items-center justify-center rounded-md bg-black p-2 text-white hover:bg-neutral-900"
               aria-label="Cart"
               onClick={() => setCartOpen(true)}
             >
@@ -166,7 +166,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="hidden rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light md:inline-flex"
+                className="hidden rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-neutral-900 md:inline-flex"
                 aria-label="Logout"
               >
                 Logout
@@ -175,13 +175,13 @@ export default function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="hidden rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light md:inline-flex"
+                  className="hidden rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-neutral-900 md:inline-flex"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="hidden rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light md:inline-flex"
+                  className="hidden rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-neutral-900 md:inline-flex"
                 >
                   Register
                 </Link>
@@ -216,7 +216,7 @@ export default function Navbar() {
                 <span className="font-display text-lg font-bold">Menu</span>
                 <button
                   type="button"
-                  className="rounded-md p-2 hover:bg-neutral-100"
+                  className="rounded-md bg-black p-2 text-white hover:bg-neutral-900"
                   aria-label="Close menu"
                   onClick={() => setMobileOpen(false)}
                 >
@@ -237,7 +237,7 @@ export default function Navbar() {
                 ))}
                 <button
                   type="button"
-                  className="rounded-md px-3 py-2 text-left text-sm font-medium text-primary hover:bg-neutral-100"
+                  className="rounded-md bg-black px-3 py-2 text-left text-sm font-medium text-white hover:bg-neutral-900"
                   onClick={() => {
                     setMobileOpen(false);
                     setCartOpen(true);
@@ -255,7 +255,7 @@ export default function Navbar() {
                 {safeAccessToken ? (
                   <Link
                     href="/account"
-                    className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light"
+                    className="rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-neutral-900"
                     onClick={() => setMobileOpen(false)}
                   >
                     Account
@@ -264,14 +264,14 @@ export default function Navbar() {
                   <>
                     <Link
                       href="/login"
-                      className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light"
+                      className="rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-neutral-900"
                       onClick={() => setMobileOpen(false)}
                     >
                       Login
                     </Link>
                     <Link
                       href="/register"
-                      className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-light"
+                      className="rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-neutral-900"
                       onClick={() => setMobileOpen(false)}
                     >
                       Register
@@ -282,7 +282,7 @@ export default function Navbar() {
                 {safeAccessToken ? (
                   <button
                     type="button"
-                    className="rounded-md bg-primary px-3 py-2 text-left text-sm font-medium text-white hover:bg-primary-light"
+                    className="rounded-md bg-black px-3 py-2 text-left text-sm font-medium text-white hover:bg-neutral-900"
                     onClick={() => {
                       setMobileOpen(false);
                       handleLogout();

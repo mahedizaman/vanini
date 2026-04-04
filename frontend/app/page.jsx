@@ -55,7 +55,7 @@ export default function HomePage() {
             </motion.p>
             <motion.div variants={staggerItem} className="mt-8">
               <Link href="/shop">
-                <Button className="bg-accent hover:bg-accent-hover">Shop Now</Button>
+                <Button>Shop Now</Button>
               </Link>
             </motion.div>
           </motion.div>

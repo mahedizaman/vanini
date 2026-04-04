@@ -99,7 +99,7 @@ export default function RegisterPage() {
               error={errors.confirmPassword}
             />
 
-            <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
+            <Button type="submit" className="w-full bg-black" size="lg" isLoading={isSubmitting}>
               Register
             </Button>
           </form>

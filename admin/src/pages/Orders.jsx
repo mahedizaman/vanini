@@ -62,6 +62,21 @@ export default function Orders() {
     }
   };
 
+  const openInvoice = async (orderId) => {
+    try {
+      const res = await api.get(`/orders/${orderId}/invoice`, { responseType: "text" });
+      const w = window.open("", "_blank", "noopener,noreferrer");
+      if (!w) {
+        toast.error("Pop-up blocked — allow pop-ups to view the invoice");
+        return;
+      }
+      w.document.write(res.data);
+      w.document.close();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not load invoice");
+    }
+  };
+
   const saveTracking = async (id) => {
     const val = rowDraft[id] ?? "";
     try {
@@ -113,6 +128,7 @@ export default function Orders() {
             { key: "customer", label: "Customer" },
             { key: "items", label: "Items" },
             { key: "total", label: "Total" },
+            { key: "invoice", label: "Invoice" },
             { key: "pay", label: "Payment" },
             { key: "orderStatus", label: "Status" },
             { key: "date", label: "Date" },
@@ -149,6 +165,15 @@ export default function Orders() {
               return `${n} lines (${qty} pcs)`;
             }
             if (col.key === "total") return `৳${Number(row.finalPrice || 0).toFixed(0)}`;
+            if (col.key === "invoice") {
+              const inv = row.invoiceNumber;
+              if (!inv) return <span className="text-neutral-400">—</span>;
+              return (
+                <button type="button" className="text-left text-xs font-mono text-primary underline" onClick={() => openInvoice(row._id)}>
+                  {inv}
+                </button>
+              );
+            }
             if (col.key === "pay") return <Badge variant={row.paymentStatus === "paid" ? "success" : "warning"}>{row.paymentStatus}</Badge>;
             if (col.key === "orderStatus") {
               return (
@@ -168,7 +193,10 @@ export default function Orders() {
             if (col.key === "date") return row.createdAt ? new Date(row.createdAt).toLocaleString() : "—";
             if (col.key === "actions") {
               return (
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" size="sm" variant="outline" onClick={() => openInvoice(row._id)} disabled={!row.invoiceNumber}>
+                    Invoice
+                  </Button>
                   <Input
                     name={`tr-${row._id}`}
                     placeholder="Tracking #"
@@ -219,6 +247,14 @@ export default function Orders() {
             <p>
               <span className="font-medium">Payment:</span> {detail.paymentStatus} · {detail.paymentMethod}
             </p>
+            {detail.invoiceNumber ? (
+              <p>
+                <span className="font-medium">Invoice:</span>{" "}
+                <button type="button" className="font-mono text-xs text-primary underline" onClick={() => openInvoice(detail._id)}>
+                  {detail.invoiceNumber}
+                </button>
+              </p>
+            ) : null}
             <p>
               <span className="font-medium">Total:</span> ৳{Number(detail.finalPrice || 0).toFixed(0)}
             </p>

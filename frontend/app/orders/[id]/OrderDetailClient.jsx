@@ -85,6 +85,15 @@ function OrderBody() {
   const shipping = Number(order.shippingCharge ?? 0);
   const total = Number(order.finalPrice ?? 0);
 
+  const paymentMethodLabel =
+    order.paymentMethod === "DirectPay"
+      ? "Direct payment (demo)"
+      : order.paymentMethod === "COD"
+        ? "Cash on delivery"
+        : order.paymentMethod === "SSLCommerz"
+          ? "SSLCommerz"
+          : order.paymentMethod || "—";
+
   return (
     <>
       {success ? (
@@ -151,8 +160,14 @@ function OrderBody() {
           <dl className="mt-3 space-y-2 text-sm">
             <div className="flex flex-wrap justify-between gap-2">
               <dt className="text-neutral-600">Method</dt>
-              <dd className="font-medium text-primary">{order.paymentMethod || "—"}</dd>
+              <dd className="font-medium text-primary">{paymentMethodLabel}</dd>
             </div>
+            {order.invoiceNumber ? (
+              <div className="flex flex-wrap justify-between gap-2">
+                <dt className="text-neutral-600">Invoice</dt>
+                <dd className="font-mono text-xs text-neutral-800">{order.invoiceNumber}</dd>
+              </div>
+            ) : null}
             <div className="flex flex-wrap items-center justify-between gap-2">
               <dt className="text-neutral-600">Status</dt>
               <dd>
@@ -206,7 +221,7 @@ function OrderBody() {
             </Button>
           </Link>
           <Link href="/shop">
-            <Button type="button" className="bg-accent hover:bg-accent-hover">
+            <Button type="button">
               Continue Shopping
             </Button>
           </Link>

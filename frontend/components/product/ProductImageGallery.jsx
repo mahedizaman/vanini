@@ -49,7 +49,7 @@ export default function ProductImageGallery({ images = [] }) {
                 key={src}
                 onClick={() => setActive(src)}
                 className={[
-                  "h-16 w-16 flex-none overflow-hidden rounded-xl border bg-neutral-50",
+                  "h-16 w-16 flex-none overflow-hidden rounded-xl border border-neutral-600 bg-black",
                   isActive ? "ring-2 ring-primary ring-offset-2" : "hover:ring-2 hover:ring-primary/40 hover:ring-offset-2",
                 ].join(" ")}
                 aria-label="Select image"

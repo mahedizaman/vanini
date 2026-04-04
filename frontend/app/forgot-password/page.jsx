@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
   return (
     <PageWrapper>
       <div className="mx-auto w-full max-w-md px-4 py-16">
-        <div className="rounded-xl border border-neutral-100 bg-white p-8 shadow-sm">
+        <div className="rounded-xl border border-neutral-100 bg-white p-8 shadow-sm bg-black">
           <h1 className="font-display text-2xl font-semibold text-primary">Forgot password</h1>
           <p className="mt-1 text-sm text-neutral-600">We&apos;ll email you a reset link.</p>
 
@@ -70,9 +70,29 @@ export default function ForgotPasswordPage() {
                 error={errors.email}
               />
 
-              <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
-                Send reset link
-              </Button>
+              <Button
+  type="submit"
+  size="lg"
+  isLoading={isSubmitting}
+  className="
+    w-full 
+    bg-black 
+    text-white 
+    border border-black 
+    rounded-xl 
+    transition-all duration-300 ease-in-out
+
+    hover:bg-white 
+    hover:text-black 
+    hover:border-black 
+    hover:shadow-lg 
+
+    active:scale-95
+    disabled:opacity-50 disabled:cursor-not-allowed
+  "
+>
+  Send reset link
+</Button>
             </form>
           )}
 

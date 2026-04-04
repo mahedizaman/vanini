@@ -7,10 +7,9 @@ const base =
   "inline-flex items-center justify-center rounded-lg font-poppins font-medium transition duration-200 disabled:opacity-60 disabled:pointer-events-none";
 
 const variants = {
-  primary: "bg-primary text-white hover:bg-primary-light",
-  // Per your UI request: keep the same 3D2B1F background + white text for all button variants.
-  outline: "border border-primary bg-primary text-white hover:bg-primary-light",
-  ghost: "bg-primary text-white hover:bg-primary-light",
+  primary: "bg-black text-white hover:bg-neutral-900",
+  outline: "border border-neutral-600 bg-black text-white hover:bg-neutral-900",
+  ghost: "bg-black text-white hover:bg-neutral-900",
 };
 
 const sizes = {

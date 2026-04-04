@@ -100,7 +100,7 @@ export default function ReviewSection({ productId, reviews = [], ratings = 0, nu
                     key={val}
                     type="button"
                     onClick={() => setRating(val)}
-                    className="rounded-md p-1"
+                    className="rounded-md bg-black p-1 hover:bg-neutral-900"
                     aria-label={`Set rating ${val}`}
                   >
                     {active ? (

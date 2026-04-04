@@ -79,7 +79,7 @@ export default function LoginPage() {
               error={errors.password}
             />
 
-            <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
+            <Button type="submit" className="w-full bg-black" size="lg" isLoading={isSubmitting}>
               Sign in
             </Button>
           </form>

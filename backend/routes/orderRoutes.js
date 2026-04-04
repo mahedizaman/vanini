@@ -9,6 +9,7 @@ const {
   getMyOrder,
   getAllOrders,
   updateOrderStatus,
+  getOrderInvoiceHtml,
   addTrackingNumber,
 } = require('../controllers/orderController');
 
@@ -136,6 +137,7 @@ router.get('/my', authMiddleware, getMyOrders);
 router.get('/my/:id', authMiddleware, getMyOrder);
 
 router.get('/', authMiddleware, adminMiddleware, getAllOrders);
+router.get('/:id/invoice', authMiddleware, adminMiddleware, getOrderInvoiceHtml);
 router.put('/:id/status', authMiddleware, adminMiddleware, updateOrderStatus);
 router.put('/:id/tracking', authMiddleware, adminMiddleware, addTrackingNumber);
 

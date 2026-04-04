@@ -3,6 +3,7 @@ const SSLCommerzPayment = require('sslcommerz-lts');
 const asyncHandler = require('../middleware/asyncHandler');
 const Order = require('../models/Order');
 const sendEmail = require('../utils/sendEmail');
+const { assignInvoiceIfMissing } = require('../utils/orderInvoice');
 
 const getSslcz = () =>
   new SSLCommerzPayment(
@@ -69,6 +70,7 @@ const handlePaidOrder = async (tranId) => {
   order.orderStatus = 'processing';
   order.paidAt = new Date();
   order.transactionId = tranId;
+  assignInvoiceIfMissing(order);
   await order.save();
 
   const email = order.user?.email;
@@ -157,8 +159,49 @@ const paymentIPN = asyncHandler(async (req, res) => {
   return res.json({ success: true });
 });
 
+/**
+ * Demo / sandbox: completes "online" payment without charging real money.
+ */
+const simulateDirectPayment = asyncHandler(async (req, res) => {
+  const { orderId } = req.body || {};
+  if (!orderId) {
+    res.status(400);
+    throw new Error('orderId is required');
+  }
+
+  const order = await Order.findById(orderId);
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  if (String(order.user) !== String(req.user._id)) {
+    res.status(403);
+    throw new Error('Not authorized');
+  }
+
+  if (order.paymentMethod !== 'DirectPay') {
+    res.status(400);
+    throw new Error('This order is not using demo online payment');
+  }
+
+  if (order.paymentStatus === 'paid') {
+    return res.json({ success: true, data: order, message: 'Already paid' });
+  }
+
+  order.paymentStatus = 'paid';
+  order.orderStatus = 'processing';
+  order.paidAt = new Date();
+  order.transactionId = `DEMO-${Date.now()}`;
+  assignInvoiceIfMissing(order);
+  await order.save();
+
+  return res.json({ success: true, data: order });
+});
+
 module.exports = {
   initPayment,
+  simulateDirectPayment,
   paymentSuccess,
   paymentFail,
   paymentCancel,

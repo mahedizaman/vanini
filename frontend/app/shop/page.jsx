@@ -124,7 +124,7 @@ export default function ShopPage() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="rounded-lg border border-neutral-100 bg-white px-4 py-3 text-sm font-medium hover:bg-neutral-50 md:hidden"
+              className="rounded-lg border border-neutral-600 bg-black px-4 py-3 text-sm font-medium text-white hover:bg-neutral-900 md:hidden"
               onClick={() => setMobileFiltersOpen(true)}
             >
               Filter
@@ -153,7 +153,7 @@ export default function ShopPage() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
             <button
               type="button"
-              className="rounded-lg border border-neutral-100 bg-white px-3 py-2 text-sm hover:bg-neutral-50 disabled:opacity-50"
+              className="rounded-lg border border-neutral-600 bg-black px-3 py-2 text-sm text-white hover:bg-neutral-900 disabled:opacity-50"
               onClick={() => setFilter({ page: Math.max(1, currentPage - 1) })}
               disabled={currentPage <= 1}
             >
@@ -167,8 +167,8 @@ export default function ShopPage() {
                 className={[
                   "h-10 w-10 rounded-lg border text-sm transition",
                   n === currentPage
-                    ? "border-primary bg-primary text-white"
-                    : "border-neutral-100 bg-white hover:bg-neutral-50",
+                    ? "border-neutral-600 bg-black text-white ring-2 ring-white"
+                    : "border-neutral-600 bg-black text-white hover:bg-neutral-900",
                 ].join(" ")}
                 onClick={() => setFilter({ page: n })}
               >
@@ -178,7 +178,7 @@ export default function ShopPage() {
 
             <button
               type="button"
-              className="rounded-lg border border-neutral-100 bg-white px-3 py-2 text-sm hover:bg-neutral-50 disabled:opacity-50"
+              className="rounded-lg border border-neutral-600 bg-black px-3 py-2 text-sm text-white hover:bg-neutral-900 disabled:opacity-50"
               onClick={() => setFilter({ page: Math.min(totalPages, currentPage + 1) })}
               disabled={currentPage >= totalPages}
             >

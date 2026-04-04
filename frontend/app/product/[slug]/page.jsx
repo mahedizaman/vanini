@@ -197,8 +197,8 @@ export default function ProductSlugPage({ params }) {
                     className={[
                       "rounded-lg border px-3 py-2 text-sm transition",
                       selectedSize === s
-                        ? "border-primary bg-primary text-white"
-                        : "border-neutral-100 bg-white hover:bg-neutral-50",
+                        ? "border-neutral-600 bg-black text-white ring-2 ring-white"
+                        : "border-neutral-600 bg-black text-white hover:bg-neutral-900",
                     ].join(" ")}
                   >
                     {s}
@@ -220,7 +220,7 @@ export default function ProductSlugPage({ params }) {
                       type="button"
                       onClick={() => setSelectedColor(c)}
                       className={[
-                        "h-9 w-9 rounded-full border transition",
+                        "h-9 w-9 rounded-full border border-neutral-600 bg-black transition",
                         active ? "ring-2 ring-primary ring-offset-2" : "hover:ring-2 hover:ring-primary/40 hover:ring-offset-2",
                       ].join(" ")}
                       style={{ backgroundColor: c }}
@@ -238,7 +238,7 @@ export default function ProductSlugPage({ params }) {
             <div className="inline-flex items-center rounded-lg border border-neutral-100 bg-white">
               <button
                 type="button"
-                className="px-3 py-2 hover:bg-neutral-50"
+                className="bg-black px-3 py-2 text-white hover:bg-neutral-900"
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
               >
                 -
@@ -246,7 +246,7 @@ export default function ProductSlugPage({ params }) {
               <div className="min-w-12 text-center text-sm font-semibold">{qty}</div>
               <button
                 type="button"
-                className="px-3 py-2 hover:bg-neutral-50"
+                className="bg-black px-3 py-2 text-white hover:bg-neutral-900"
                 onClick={() => setQty((q) => q + 1)}
               >
                 +
@@ -264,7 +264,7 @@ export default function ProductSlugPage({ params }) {
             </Button>
             <button
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-100 bg-white hover:bg-neutral-50"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-600 bg-black text-white hover:bg-neutral-900"
               onClick={async () => {
                 if (!accessToken) {
                   router.push("/login");
@@ -284,7 +284,7 @@ export default function ProductSlugPage({ params }) {
               }}
               aria-label="Add to Wishlist"
             >
-              <HiOutlineHeart className={`h-6 w-6 ${wishlisted ? "text-accent" : "text-primary"}`} />
+              <HiOutlineHeart className={`h-6 w-6 ${wishlisted ? "text-amber-400" : "text-white"}`} />
             </button>
           </div>
 

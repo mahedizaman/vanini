@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema(
       district: String,
       postalCode: String,
     },
-    paymentMethod: { type: String, enum: ['SSLCommerz', 'COD'] },
+    paymentMethod: { type: String, enum: ['SSLCommerz', 'COD', 'DirectPay'] },
     paymentStatus: {
       type: String,
       enum: ['pending', 'paid', 'failed'],
@@ -42,6 +42,8 @@ const orderSchema = new mongoose.Schema(
     transactionId: String,
     paidAt: Date,
     deliveredAt: Date,
+    invoiceNumber: { type: String, trim: true, sparse: true },
+    invoiceGeneratedAt: Date,
   },
   { timestamps: true }
 );

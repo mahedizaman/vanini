@@ -6,14 +6,15 @@ import api from "@/utils/axios";
 import Button from "@/components/ui/Button";
 
 const sizes = ["S", "M", "L", "XL", "XXL"];
-const colors = [
-  { key: "black", className: "bg-black" },
-  { key: "white", className: "bg-white border" },
-  { key: "red", className: "bg-red-500" },
-  { key: "blue", className: "bg-blue-500" },
-  { key: "green", className: "bg-green-500" },
-  { key: "yellow", className: "bg-yellow-400" },
-];
+const colorValues = {
+  black: "#000000",
+  white: "#ffffff",
+  red: "#ef4444",
+  blue: "#3b82f6",
+  green: "#22c55e",
+  yellow: "#facc15",
+};
+const colorKeys = Object.keys(colorValues);
 
 const fetchCategories = async () => {
   const res = await api.get("/categories");
@@ -34,7 +35,7 @@ export default function FilterSidebar({ filters, setFilters, onClear, onDone }) 
         <h3 className="text-sm font-semibold text-primary">Filters</h3>
         <button
           type="button"
-          className="text-xs font-medium text-accent hover:underline"
+          className="rounded-md bg-black px-2 py-1 text-xs font-medium text-white hover:bg-neutral-900"
           onClick={onClear}
         >
           Clear Filters
@@ -52,7 +53,9 @@ export default function FilterSidebar({ filters, setFilters, onClear, onDone }) 
             onClick={() => setFilters({ category: "", page: 1 })}
             className={[
               "w-full rounded-lg px-3 py-2 text-left text-sm transition",
-              !filters.category ? "bg-neutral-100 text-primary" : "hover:bg-neutral-50",
+              !filters.category
+                ? "bg-black text-white ring-2 ring-white"
+                : "bg-black text-white hover:bg-neutral-900",
             ].join(" ")}
           >
             All
@@ -64,7 +67,9 @@ export default function FilterSidebar({ filters, setFilters, onClear, onDone }) 
               onClick={() => setFilters({ category: c.slug, page: 1 })}
               className={[
                 "w-full rounded-lg px-3 py-2 text-left text-sm transition",
-                filters.category === c.slug ? "bg-neutral-100 text-primary" : "hover:bg-neutral-50",
+                filters.category === c.slug
+                  ? "bg-black text-white ring-2 ring-white"
+                  : "bg-black text-white hover:bg-neutral-900",
               ].join(" ")}
             >
               {c.name}
@@ -121,19 +126,19 @@ export default function FilterSidebar({ filters, setFilters, onClear, onDone }) 
           Color
         </p>
         <div className="flex flex-wrap gap-2">
-          {colors.map((c) => {
-            const active = filters.color === c.key;
+          {colorKeys.map((key) => {
+            const active = filters.color === key;
             return (
               <button
-                key={c.key}
+                key={key}
                 type="button"
-                onClick={() => setFilters({ color: active ? "" : c.key, page: 1 })}
+                onClick={() => setFilters({ color: active ? "" : key, page: 1 })}
+                style={{ backgroundColor: colorValues[key] }}
                 className={[
-                  "h-8 w-8 rounded-full transition",
-                  c.className,
+                  "h-8 w-8 rounded-full border border-neutral-600 bg-black transition",
                   active ? "ring-2 ring-primary ring-offset-2" : "hover:ring-2 hover:ring-primary/40 hover:ring-offset-2",
                 ].join(" ")}
-                aria-label={`Color ${c.key}`}
+                aria-label={`Color ${key}`}
               />
             );
           })}

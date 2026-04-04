@@ -16,9 +16,9 @@ export default function SortDropdown({ value, onChange }) {
   return (
     <Listbox value={selected.value} onChange={onChange}>
       <div className="relative w-56">
-        <Listbox.Button className="flex w-full items-center justify-between rounded-lg border border-neutral-100 bg-white px-4 py-3 text-sm font-medium text-primary hover:bg-neutral-50">
+        <Listbox.Button className="flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-black px-4 py-3 text-sm font-medium text-white hover:bg-neutral-900">
           <span>{selected.label}</span>
-          <HiChevronUpDown className="h-5 w-5 text-neutral-800/60" />
+          <HiChevronUpDown className="h-5 w-5 text-white/70" />
         </Listbox.Button>
 
         <Listbox.Options className="absolute right-0 mt-2 w-full overflow-hidden rounded-xl border border-neutral-100 bg-white py-1 shadow-lg">

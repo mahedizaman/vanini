@@ -37,7 +37,7 @@ export default function CartDrawer({ open, onClose }) {
               <h2 className="font-display text-lg font-bold text-primary">Your Cart</h2>
               <button
                 type="button"
-                className="rounded-md p-2 hover:bg-neutral-100"
+                className="rounded-md bg-black p-2 text-white hover:bg-neutral-900"
                 aria-label="Close cart"
                 onClick={onClose}
               >
@@ -71,7 +71,7 @@ export default function CartDrawer({ open, onClose }) {
 
                           <button
                             type="button"
-                            className="rounded-md p-2 text-neutral-800 hover:bg-neutral-100"
+                            className="rounded-md bg-black p-2 text-white hover:bg-neutral-900"
                             aria-label="Remove item"
                             onClick={() => removeItem(item.product, item.size, item.color)}
                           >
@@ -83,7 +83,7 @@ export default function CartDrawer({ open, onClose }) {
                           <div className="inline-flex items-center rounded-md border">
                             <button
                               type="button"
-                              className="p-2 hover:bg-neutral-100 disabled:opacity-40"
+                              className="bg-black p-2 text-white hover:bg-neutral-900 disabled:opacity-40"
                               aria-label="Decrease quantity"
                               disabled={Number(item.quantity || 1) <= 1}
                               onClick={() =>
@@ -95,7 +95,7 @@ export default function CartDrawer({ open, onClose }) {
                             <span className="min-w-10 select-none text-center text-sm">{item.quantity}</span>
                             <button
                               type="button"
-                              className="p-2 hover:bg-neutral-100"
+                              className="bg-black p-2 text-white hover:bg-neutral-900"
                               aria-label="Increase quantity"
                               onClick={() =>
                                 updateQuantity(item.product, item.size, item.color, Number(item.quantity || 1) + 1)
@@ -126,7 +126,7 @@ export default function CartDrawer({ open, onClose }) {
                 View full cart
               </Link>
               <Link href="/checkout" className="mt-3 block" onClick={onClose}>
-                <Button className="w-full bg-accent hover:bg-accent-hover">Proceed to Checkout</Button>
+                <Button className="w-full">Proceed to Checkout</Button>
               </Link>
             </div>
           </motion.aside>

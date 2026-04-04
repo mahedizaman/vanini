@@ -4,6 +4,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const {
   initPayment,
+  simulateDirectPayment,
   paymentSuccess,
   paymentFail,
   paymentCancel,
@@ -100,6 +101,7 @@ const {
  */
 
 router.post('/init', authMiddleware, initPayment);
+router.post('/simulate-direct', authMiddleware, simulateDirectPayment);
 router.post('/success', paymentSuccess);
 router.get('/success', paymentSuccess);
 router.post('/fail', paymentFail);

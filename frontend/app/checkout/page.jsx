@@ -162,15 +162,15 @@ function CheckoutContent() {
         return;
       }
 
-      if (paymentMethod === "SSLCommerz") {
-        const init = await api.post("/payment/init", { orderId: order._id });
-        const gatewayUrl = init.data?.GatewayPageURL;
-        if (gatewayUrl) {
-          window.location.href = gatewayUrl;
-        } else {
-          toast.error("Payment gateway unavailable");
-        }
+      if (paymentMethod === "DirectPay") {
+        // Demo online payment — no real charge; marks order paid and generates invoice on the server.
+        await api.post("/payment/simulate-direct", { orderId: order._id });
+        clearCart();
+        router.push(`/orders/${order._id}?status=success`);
+        return;
       }
+
+      toast.error("Unsupported payment method");
     } catch (err) {
       toast.error(err?.response?.data?.message || "Order failed");
     } finally {
@@ -216,12 +216,12 @@ function CheckoutContent() {
                             className={[
                               "w-full rounded-lg border px-4 py-3 text-left text-sm transition",
                               selectedSaved === i
-                                ? "border-primary bg-neutral-50"
-                                : "border-neutral-100 hover:border-neutral-200",
+                                ? "border-neutral-600 bg-black text-white ring-2 ring-white"
+                                : "border-neutral-600 bg-black text-white hover:bg-neutral-900",
                             ].join(" ")}
                           >
-                            <span className="font-medium text-primary">{addr.fullName}</span>
-                            <span className="mt-1 block text-neutral-600">
+                            <span className="font-medium text-white">{addr.fullName}</span>
+                            <span className="mt-1 block text-white/80">
                               {[addr.street, addr.city, addr.district, addr.postalCode].filter(Boolean).join(", ")}
                             </span>
                           </button>
@@ -234,8 +234,8 @@ function CheckoutContent() {
                       className={[
                         "w-full rounded-lg border px-4 py-3 text-left text-sm font-medium transition",
                         selectedSaved === "new"
-                          ? "border-primary bg-neutral-50"
-                          : "border-dashed border-neutral-200 text-primary hover:bg-neutral-50",
+                          ? "border-neutral-600 bg-black text-white ring-2 ring-white"
+                          : "border-dashed border-neutral-500 bg-black text-white hover:bg-neutral-900",
                       ].join(" ")}
                     >
                       + Use a new address
@@ -266,15 +266,18 @@ function CheckoutContent() {
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   <button
                     type="button"
-                    onClick={() => setPaymentMethod("SSLCommerz")}
+                    onClick={() => setPaymentMethod("DirectPay")}
                     className={[
                       "rounded-xl border px-4 py-4 text-left text-sm font-medium transition",
-                      paymentMethod === "SSLCommerz"
-                        ? "border-primary bg-primary text-white hover:bg-primary-light"
-                        : "border-primary/40 bg-primary/90 text-white hover:bg-primary-light",
+                      paymentMethod === "DirectPay"
+                        ? "border-neutral-600 bg-black text-white ring-2 ring-white"
+                        : "border-neutral-600 bg-black/90 text-white hover:bg-neutral-900",
                     ].join(" ")}
                   >
-                    Pay with SSLCommerz
+                    <span className="block font-semibold">Direct payment (demo)</span>
+                    <span className="mt-1 block text-xs font-normal text-white/80">
+                      Simulated card/online pay — no real money is charged.
+                    </span>
                   </button>
                   <button
                     type="button"
@@ -282,11 +285,14 @@ function CheckoutContent() {
                     className={[
                       "rounded-xl border px-4 py-4 text-left text-sm font-medium transition",
                       paymentMethod === "COD"
-                        ? "border-primary bg-primary text-white hover:bg-primary-light"
-                        : "border-primary/40 bg-primary/90 text-white hover:bg-primary-light",
+                        ? "border-neutral-600 bg-black text-white ring-2 ring-white"
+                        : "border-neutral-600 bg-black/90 text-white hover:bg-neutral-900",
                     ].join(" ")}
                   >
-                    Cash on Delivery
+                    <span className="block font-semibold">Cash on delivery</span>
+                    <span className="mt-1 block text-xs font-normal text-white/80">
+                      Pay the courier when your order arrives.
+                    </span>
                   </button>
                 </div>
 
@@ -296,7 +302,6 @@ function CheckoutContent() {
                   </Button>
                   <Button
                     type="button"
-                      className="bg-accent hover:bg-accent-hover"
                     size="lg"
                     isLoading={placing}
                     onClick={onPlaceOrder}

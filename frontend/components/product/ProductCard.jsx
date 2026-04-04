@@ -108,9 +108,9 @@ export default function ProductCard({ product }) {
             type="button"
             aria-label="Toggle wishlist"
             onClick={onToggleWishlist}
-            className="absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur transition duration-200 hover:bg-white"
+            className="absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition duration-200 hover:bg-neutral-900"
           >
-            <HiOutlineHeart className={`h-5 w-5 ${wishlisted ? "text-accent" : "text-primary"}`} />
+            <HiOutlineHeart className={`h-5 w-5 ${wishlisted ? "text-amber-400" : "text-white"}`} />
           </button>
         </div>
 
